@@ -25,7 +25,7 @@ class CustomUser(AbstractUser):
 @receiver(post_save, sender=CustomUser)
 def _post_save_receiver(sender,instance,created, **kwargs):
     if created:
-        subject = 'Your OTP'
+        subject = 'Your OTP for verification'
         otp = generate_otp()
         message = f'Your OTP is: {otp}. Please do not share this OTP.'
         from_email = 'muhammedmamu2906@gmail.com' 
@@ -37,6 +37,9 @@ def _post_save_receiver(sender,instance,created, **kwargs):
 
 def generate_otp():
     return random.randint(100000, 999999)
+
+
+
 
 
     
