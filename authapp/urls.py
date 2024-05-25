@@ -16,7 +16,7 @@ urlpatterns = [
     # other urls
     path('usersignup',views.UserRegistration().as_view()),
     path('otpverification',views.Otpverificaion().as_view()),
-    path('userlogin',views.Userlogin().as_view()),
+    path('userlogin',views.Login().as_view()),
 
 
     

@@ -64,18 +64,19 @@ class Otpverificaion(APIView):
 
 
 # login of the user
-class Userlogin(APIView):
+class Login(APIView):
       def post(self , request):
             print(request.data)
             email = request.data['email']
             password = request.data['password']
             try:
+                 
                   user = CustomUser.objects.get(email = email)
             except:
                   return Response({"error":"notpresent"},status=status.HTTP_400_BAD_REQUEST)
             if user and user.check_password(password) :
                   if user.is_superuser:
-                         return Response({"error":"notpresent"},status=status.HTTP_400_BAD_REQUEST)
+                         return Response({"message":"adminfound","role":"admin"},status=status.HTTP_200_OK)
                   else:
                        if user.is_verified:
                              return Response({"message":"userfound","role":"user"},status=status.HTTP_200_OK) 
