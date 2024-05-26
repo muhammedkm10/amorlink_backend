@@ -64,6 +64,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'authapp.middleware.jwt_checking_middleware.JwtCheckingMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
