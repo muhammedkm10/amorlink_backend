@@ -6,10 +6,10 @@ class JwtCheckingMiddleware:
 
     def __call__(self, request: HttpRequest):
         # Define the list of URLs to exclude from JWT checking
-        excluded_urls = ['/authapp/userlogin', '/authapp/usersignup','/authapp/api/token']
+        excluded_urls = ['/authapp/userlogin', '/authapp/usersignup','/authapp/api/token','/authapp/api/token/refresh','/authapp/otpverification']
+        
         if request.method == "POST" and request.path in excluded_urls:
             response = self.get_response(request)
-            print("Skipping JWT check for", request.path)
             return response
         # other requests that does need the jwt access token
         else:

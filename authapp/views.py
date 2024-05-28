@@ -44,13 +44,12 @@ class UserRegistration(APIView):
                         ProfessionalsDetails.objects.create(user_id = current_user,employed_in=request.data['employed_in'],annual_income=request.data['annual_income'])
                         LocationDetails.objects.create(user_id = current_user,contry=request.data['country'],state=request.data['state'],district=request.data['district'])
                         return Response({"message": "Signup successful"},status=status.HTTP_201_CREATED)
+            # taking data to front end
             def get(self ,request):
                   token = request.headers.get('Authorization')
                   user_id ,email = convertjwt(token)
-                  print(user_id,email)
                   user = CustomUser.objects.get(id = user_id)
                   serializer = CustomUserSerializer(user)
-                  print(serializer.data)
   
                   return Response({"message": "Success","user":serializer.data})
 
@@ -67,7 +66,6 @@ class Otpverificaion(APIView):
             except:
                 return Response({"error": "notpresent"},status=status.HTTP_400_BAD_REQUEST)
             if user.otp == int(request.data['otpValue']):
-                  print("halo")
                   user.is_verified = True
                   user.save()
                   return Response({"message": "verified succesfully"},status=status.HTTP_201_CREATED)
@@ -78,10 +76,8 @@ class Otpverificaion(APIView):
 # login of the user
 class Login(APIView):
       def post(self , request):
-            print(request.data)
             email = request.data['email']
             password = request.data['password']
-            print(request.content_type)
             try:
                   user = CustomUser.objects.get(email = email)
             except:
