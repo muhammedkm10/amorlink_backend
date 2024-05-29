@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from .models import CustomUser
 from rest_framework import status
-from UserProfileapp.models import BasicDetails,FamilyDetails,LocationDetails,ProfessionalsDetails,ReligionInformation
+from UserProfileapp.models import BasicDetails,FamilyDetails,LocationDetails,ProfessionalsDetails,ReligionInformation,Gallary
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -11,6 +11,8 @@ from django.core.mail import send_mail
 from .models import generate_otp
 from .utils import convertjwt
 from .serializers import CustomUserSerializer
+from datetime import datetime
+from UserProfileapp.serializer import Gallaryseializer,BasicDetailseializer
 # Create your views here.
 
 # customization for the token 
@@ -38,20 +40,28 @@ class UserRegistration(APIView):
                         user = CustomUser(username = request.data['name'],email = request.data['email'],password = make_password(request.data['password']),phone = request.data['phone'],about_groom = request.data['about'],is_blocked = False,is_verified = False,account_for =  request.data['accountFor'])
                         user.save()
                         current_user = CustomUser.objects.get(id = user.id)
-                        BasicDetails.objects.create(user_id = current_user,marital_status =request.data['maritalStatus'],dob=request.data['dob'],height=request.data['height'],mother_toungue= request.data['language'])
+                        current_date = datetime.now()
+                        dobofuser_str = request.data['dob']
+                        dobofuser = datetime.fromisoformat(dobofuser_str)  
+                        age = current_date.year - dobofuser.year - ((current_date.month, current_date.day) < (dobofuser.month, dobofuser.day))
+                        BasicDetails.objects.create(user_id = current_user,marital_status =request.data['maritalStatus'],dob=request.data['dob'],height=request.data['height'],mother_toungue= request.data['language'],gender= request.data['gender'],age = age)
                         ReligionInformation.objects.create(user_id = current_user,religion=request.data['religion'],cast=request.data['cast'])
                         FamilyDetails.objects.create(user_id = current_user,family_status=request.data['familystatus'])
                         ProfessionalsDetails.objects.create(user_id = current_user,employed_in=request.data['employed_in'],annual_income=request.data['annual_income'])
                         LocationDetails.objects.create(user_id = current_user,contry=request.data['country'],state=request.data['state'],district=request.data['district'])
+                        Gallary.objects.create(user_id = current_user)
                         return Response({"message": "Signup successful"},status=status.HTTP_201_CREATED)
             # taking data to front end
             def get(self ,request):
                   token = request.headers.get('Authorization')
                   user_id ,email = convertjwt(token)
                   user = CustomUser.objects.get(id = user_id)
-                  serializer = CustomUserSerializer(user)
-  
-                  return Response({"message": "Success","user":serializer.data})
+                  user_gallary = Gallary.objects.get(user_id = user)
+                  user_basic_details = BasicDetails.objects.get(user_id = user)
+                  usedetailsserializer = CustomUserSerializer(user)
+                  photoserializer = Gallaryseializer(user_gallary)
+                  basicuserserializer = BasicDetailseializer(user_basic_details)
+                  return Response({"message": "Success","user":usedetailsserializer.data,"usergallary":photoserializer.data,"basicdetails":basicuserserializer.data})
 
     
     

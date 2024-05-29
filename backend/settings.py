@@ -71,6 +71,7 @@ ROOT_URLCONF = 'backend.urls'
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    'http://localhost:5173'
 ]
 
 CORS_ALLOW_METHODS = [
@@ -81,6 +82,18 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
     'HEAD'
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'details',
 ]
 
 TEMPLATES = [
@@ -191,7 +204,7 @@ REST_FRAMEWORK = {
 # simple jwt 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -227,6 +240,14 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
+
+
+# media settings
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# MEDIA_URL is the URL that will serve the media files
+MEDIA_URL = '/media/'
 
 
 
