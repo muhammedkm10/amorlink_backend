@@ -31,7 +31,7 @@ class UserProfileDetails(APIView):
             serializer = LocationDetailsseializer(location_details)
             return Response({"message":"success","location_details":serializer.data})
         elif details_header_value == "partner_preferences":
-            partner_preferences  = ProfessionalsDetails.objects.get(user_id = user)
+            partner_preferences  = PatnerPreferences.objects.get(user_id = user)
             serializer = PatnerPreferencesDetailsseializer(partner_preferences)
             return Response({"message":"success","partner_preferences":serializer.data})
         elif details_header_value == "photos_gallary":

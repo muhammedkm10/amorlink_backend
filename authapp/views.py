@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from .models import CustomUser
 from rest_framework import status
-from UserProfileapp.models import BasicDetails,FamilyDetails,LocationDetails,ProfessionalsDetails,ReligionInformation,Gallary
+from UserProfileapp.models import BasicDetails,FamilyDetails,LocationDetails,ProfessionalsDetails,ReligionInformation,Gallary,PatnerPreferences
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -50,6 +50,8 @@ class UserRegistration(APIView):
                         ProfessionalsDetails.objects.create(user_id = current_user,employed_in=request.data['employed_in'],annual_income=request.data['annual_income'])
                         LocationDetails.objects.create(user_id = current_user,contry=request.data['country'],state=request.data['state'],district=request.data['district'])
                         Gallary.objects.create(user_id = current_user)
+                        PatnerPreferences.objects.create(user_id = current_user)
+
                         return Response({"message": "Signup successful"},status=status.HTTP_201_CREATED)
             # taking data to front end
             def get(self ,request):
