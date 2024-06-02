@@ -13,6 +13,9 @@ from .utils import convertjwt
 from .serializers import CustomUserSerializer
 from datetime import datetime
 from UserProfileapp.serializer import Gallaryseializer,BasicDetailseializer
+import base64
+from django.core.files.base import ContentFile
+
 # Create your views here.
 
 # customization for the token 
@@ -64,9 +67,33 @@ class UserRegistration(APIView):
                   photoserializer = Gallaryseializer(user_gallary)
                   basicuserserializer = BasicDetailseializer(user_basic_details)
                   return Response({"message": "Success","user":usedetailsserializer.data,"usergallary":photoserializer.data,"basicdetails":basicuserserializer.data})
+      #      function for the edit the data in the main details in  user profile
+            def put(self,request):
+                  token = request.headers.get('Authorization')
+                  user_id ,email = convertjwt(token)
+                  user = CustomUser.objects.get(id = user_id)
+                  print(request.data)
+                  if "name" in request.data.keys():
+                      name1 = request.data['name']
+                      user.username = name1
+                      user.save()
+                  if request.data.get('image1'):
+                        userdetails = Gallary.objects.get(user_id = user)
+                        image1_file = request.data.get('image1')
+                        format, imgstr = image1_file.split(';base64,')
+                        ext = format.split('/')[-1]
+                        image_file = ContentFile(base64.b64decode(imgstr), name=f'image1.{ext}')
+                        setattr(userdetails, "image1", image_file)
+                        userdetails.save()
+                  if request.data.get('about'):
+                        user.about_groom = request.data.get('about')
+                        user.save()
+                  return Response({"message": "success"},status=status.HTTP_201_CREATED)
+                   
 
     
     
+
 
 
 

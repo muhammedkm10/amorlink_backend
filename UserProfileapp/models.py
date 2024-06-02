@@ -21,19 +21,11 @@ class BasicDetails(models.Model):
 
 
 
-
-
-
-
-
-
-
-
 class ReligionInformation(models.Model):
     user_id = models.ForeignKey(CustomUser,on_delete=models.CASCADE,null=True,blank=True)
     religion = models.CharField(max_length=30,null=True,blank=True)
     cast = models.CharField(max_length=30,null=True,blank=True)
-    time_of_birth = models.TimeField(null=True)
+    time_of_birth = models.CharField( max_length=50,null=True,blank=True)
     place_of_birth = models.CharField(max_length=50 ,null=True)
                                      
 
