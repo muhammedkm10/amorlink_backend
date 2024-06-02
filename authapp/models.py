@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
     username = models.CharField(max_length=150, blank=True)
     phone = models.CharField(max_length=20, blank=True , null=True)
     account_for = models.CharField(max_length=20, blank=True,null=True)
-    about_groom  = models.TextField()
+    about_groom  = models.TextField(null=True,blank=True)
     otp = models.IntegerField(blank=True,null= True)
     is_blocked = models.BooleanField(blank=True ,null=True)
     is_verified = models.BooleanField(blank=True ,null=True)

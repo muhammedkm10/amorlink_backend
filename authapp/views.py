@@ -61,12 +61,15 @@ class UserRegistration(APIView):
                   token = request.headers.get('Authorization')
                   user_id ,email = convertjwt(token)
                   user = CustomUser.objects.get(id = user_id)
-                  user_gallary = Gallary.objects.get(user_id = user)
-                  user_basic_details = BasicDetails.objects.get(user_id = user)
                   usedetailsserializer = CustomUserSerializer(user)
-                  photoserializer = Gallaryseializer(user_gallary)
-                  basicuserserializer = BasicDetailseializer(user_basic_details)
-                  return Response({"message": "Success","user":usedetailsserializer.data,"usergallary":photoserializer.data,"basicdetails":basicuserserializer.data})
+                  if not user.is_superuser:
+                        user_gallary = Gallary.objects.get(user_id = user)
+                        user_basic_details = BasicDetails.objects.get(user_id = user)
+                        usedetailsserializer = CustomUserSerializer(user)
+                        photoserializer = Gallaryseializer(user_gallary)
+                        basicuserserializer = BasicDetailseializer(user_basic_details)
+                        return Response({"message": "Success","user":usedetailsserializer.data,"usergallary":photoserializer.data,"basicdetails":basicuserserializer.data})
+                  return Response({"message": "Success","user":usedetailsserializer.data})
       #      function for the edit the data in the main details in  user profile
             def put(self,request):
                   token = request.headers.get('Authorization')

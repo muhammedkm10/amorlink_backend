@@ -23,6 +23,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
      path('authapp/', include('authapp.urls')),
      path('profileapp/', include('UserProfileapp.urls')),
+     path('adminapp/', include('adminapp.urls')),
+
 
 
 ]
