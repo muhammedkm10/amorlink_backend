@@ -7,8 +7,9 @@ from .models import Subscription
 class Add_Update_subscription(ModelSerializer):
     class Meta:
         model = Subscription
-        exclude = ['no_users','is_listed']
+        exclude = ['no_users']
  
+
 
 # retriving and deleting the data from the data base
 class Retrive_delete_subscription(ModelSerializer):

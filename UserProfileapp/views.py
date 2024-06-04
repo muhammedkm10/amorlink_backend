@@ -8,6 +8,9 @@ from authapp.models import CustomUser
 from .serializer import BasicDetailseializer,FamilyDetailsseializer,ReligionInformationseializer,ProfessionalsDetailsseializer,LocationDetailsseializer,Gallaryseializer,PatnerPreferencesDetailsseializer
 from django.shortcuts import get_object_or_404
 from authapp.serializers import CustomUserSerializer
+from datetime import datetime
+from django.db.models import Q
+
 # Create your views here.
 
 
@@ -59,12 +62,18 @@ class UserProfileDetails(APIView):
                 userdetails = get_object_or_404(BasicDetails, user_id=user)
                 aboutdetais = get_object_or_404(CustomUser, id=user_id)
                 for key,value in request.data.items():
-                    print(key,value)
                     if  key == "phone":
                         setattr(aboutdetais,key,value)
                         aboutdetais.save()
                     else:
-                        setattr(userdetails,key,value)
+                        if key == "dob":
+                                current_date = datetime.now()
+                                dobofuser_str = request.data['dob']
+                                dobofuser = datetime.fromisoformat(dobofuser_str)  
+                                age = current_date.year - dobofuser.year - ((current_date.month, current_date.day) < (dobofuser.month, dobofuser.day))
+                                setattr(userdetails,"age",age)
+                        else:
+                           setattr(userdetails,key,value)
                 userdetails.save()
                 return Response({"message":"success"})
         elif details_header_value == "religional_information":
@@ -118,10 +127,81 @@ class UserProfileDetails(APIView):
           imagerow = Gallary.objects.get(user_id = user)
           setattr(imagerow, img, None)
           imagerow.save()
-
           return Response({"message":"success"})
 
-                      
+
+
+# showing the preferences according to their preferences
+class ShowPreferences(APIView):
+      def get(self,request):
+            details_header_value = request.META.get('HTTP_DETAILS', None)
+            token = request.headers.get('Authorization')
+            user_id ,email = convertjwt(token)
+            user = CustomUser.objects.get(id = user_id)
+            user_preferences = PatnerPreferences.objects.get(user_id_id = user.id)
+            print("gender", user.male)
+
+            
+            if details_header_value == "religion":
+                  other_users = ReligionInformation.objects.filter(Q(religion = user_preferences.religion) | Q(cast = user_preferences.cast) ).exclude( Q(user_id = user.id)|Q(user_id__male = user.male))
+                  response_data = {"message":"success",'users':[]}
+                  for user in other_users:
+                        obj = CustomUser.objects.get(email = user.user_id )
+                        main_detail_of_user = CustomUser.objects.get(email  = user.user_id)
+                        basice_details = BasicDetails.objects.get(user_id = obj.id)
+                        image = Gallary.objects.get(user_id = obj.id)
+                        serializer1 = CustomUserSerializer(main_detail_of_user)
+                        serializer2 = BasicDetailseializer(basice_details)
+                        serializer3 = Gallaryseializer(image)
+                        response_data['users'].append({"main_detail_of_user":serializer1.data,"basice_details":serializer2.data,"image":serializer3.data})
+                  return Response(response_data) 
+            
+
+            elif details_header_value == "profession":
+                  other_users = ProfessionalsDetails.objects.filter(Q(highest_education = user_preferences.highest_education)|Q(employed_in = user_preferences.employed_in)|Q(annual_income = user_preferences.annual_income)).exclude(Q(user_id = user.id)|Q(user_id__male = user.male))
+                  response_data = {"message":"success",'users':[]}
+                  for user in other_users:
+                        obj = CustomUser.objects.get(email = user.user_id )
+                        main_detail_of_user = CustomUser.objects.get(email  = user.user_id)
+                        basice_details = BasicDetails.objects.get(user_id = obj.id)
+                        image = Gallary.objects.get(user_id = obj.id)
+                        serializer1 = CustomUserSerializer(main_detail_of_user)
+                        serializer2 = BasicDetailseializer(basice_details)
+                        serializer3 = Gallaryseializer(image)
+                        response_data['users'].append({"main_detail_of_user":serializer1.data,"basice_details":serializer2.data,"image":serializer3.data})
+                  return Response(response_data)
+            
+            elif details_header_value == "personal":
+                  other_users = BasicDetails.objects.filter(Q(age = user_preferences.patner_age)|Q(height = user_preferences.height)|Q(marital_status = user_preferences.marital_status)|Q(mother_toungue = user_preferences.mother_toungue)|Q(physical_status = user_preferences.physical_status)).exclude(Q(user_id = user.id)|Q(user_id__male = user.male))
+                  response_data = {"message":"success",'users':[]}
+                  for user in other_users:
+                        obj = CustomUser.objects.get(email = user.user_id )
+                        main_detail_of_user = CustomUser.objects.get(email  = user.user_id)
+                        basice_details = BasicDetails.objects.get(user_id = obj.id)
+                        image = Gallary.objects.get(user_id = obj.id)
+                        serializer1 = CustomUserSerializer(main_detail_of_user)
+                        serializer2 = BasicDetailseializer(basice_details)
+                        serializer3 = Gallaryseializer(image)
+                        response_data['users'].append({"main_detail_of_user":serializer1.data,"basice_details":serializer2.data,"image":serializer3.data})
+                  return Response(response_data)
+            
+            elif details_header_value == "lifestyle":
+                  other_users = BasicDetails.objects.filter(Q(drinking_habits = user_preferences.drinking_habits)|Q(eating_habits = user_preferences.eating_habits)|Q(marital_status = user_preferences.marital_status)|Q(smalking_habits = user_preferences.smalking_habits)).exclude(Q(user_id = user.id)|Q(user_id__male = user.male))
+                  response_data = {"message":"success",'users':[]}
+                  for user in other_users:
+                        obj = CustomUser.objects.get(email = user.user_id )
+                        main_detail_of_user = CustomUser.objects.get(email  = user.user_id)
+                        basice_details = BasicDetails.objects.get(user_id = obj.id)
+                        image = Gallary.objects.get(user_id = obj.id)
+                        serializer1 = CustomUserSerializer(main_detail_of_user)
+                        serializer2 = BasicDetailseializer(basice_details)
+                        serializer3 = Gallaryseializer(image)
+                        response_data['users'].append({"main_detail_of_user":serializer1.data,"basice_details":serializer2.data,"image":serializer3.data})
+                  return Response(response_data)
+            
+                  
+
+            
                 
                 
 

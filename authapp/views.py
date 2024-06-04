@@ -40,7 +40,12 @@ class UserRegistration(APIView):
                                     return Response({"error": "emailused"},status=status.HTTP_400_BAD_REQUEST)
                         if len(request.data['phone']) != 10:
                                     return Response({"error": "phonenumber"},status=status.HTTP_400_BAD_REQUEST)
-                        user = CustomUser(username = request.data['name'],email = request.data['email'],password = make_password(request.data['password']),phone = request.data['phone'],about_groom = request.data['about'],is_blocked = False,is_verified = False,account_for =  request.data['accountFor'])
+                        gender = gender= request.data['gender']
+                        if gender == "male":
+                              gender_in_maintable = True
+                        else:
+                              gender_in_maintable = False
+                        user = CustomUser(username = request.data['name'],email = request.data['email'],password = make_password(request.data['password']),phone = request.data['phone'],about_groom = request.data['about'],is_blocked = False,is_verified = False,account_for =  request.data['accountFor'],male = gender_in_maintable)
                         user.save()
                         current_user = CustomUser.objects.get(id = user.id)
                         current_date = datetime.now()
@@ -129,7 +134,11 @@ class Login(APIView):
                          return Response({"message":"adminfound","role":"admin"},status=status.HTTP_200_OK)
                   else:
                        if user.is_verified:
-                             return Response({"message":"userfound","role":"user"},status=status.HTTP_200_OK) 
+                             if not user.is_blocked:
+                                  return Response({"message":"userfound","role":"user"},status=status.HTTP_200_OK) 
+                             else:
+                              return Response({"error":"blocked"},status=status.HTTP_400_BAD_REQUEST) 
+                                   
                        else: 
                              subject  = "Your otp for verification "
                              otp = generate_otp()

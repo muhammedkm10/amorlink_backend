@@ -19,6 +19,7 @@ class CustomUser(AbstractUser):
     otp = models.IntegerField(blank=True,null= True)
     is_blocked = models.BooleanField(blank=True ,null=True)
     is_verified = models.BooleanField(blank=True ,null=True)
+    male = models.BooleanField(null=True)
 
 
 
