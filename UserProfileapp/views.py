@@ -60,11 +60,11 @@ class UserProfileDetails(APIView):
         user = CustomUser.objects.get(id = user_id)
         if details_header_value == "basic_details":
                 userdetails = get_object_or_404(BasicDetails, user_id=user)
-                aboutdetais = get_object_or_404(CustomUser, id=user_id)
+                aboutdetails = get_object_or_404(CustomUser, id=user_id)
                 for key,value in request.data.items():
                     if  key == "phone":
-                        setattr(aboutdetais,key,value)
-                        aboutdetais.save()
+                        setattr(aboutdetails,key,value)
+                        aboutdetails.save()
                     else:
                         if key == "dob":
                                 current_date = datetime.now()
@@ -72,6 +72,7 @@ class UserProfileDetails(APIView):
                                 dobofuser = datetime.fromisoformat(dobofuser_str)  
                                 age = current_date.year - dobofuser.year - ((current_date.month, current_date.day) < (dobofuser.month, dobofuser.day))
                                 setattr(userdetails,"age",age)
+                                setattr(userdetails,"dob",dobofuser)
                         else:
                            setattr(userdetails,key,value)
                 userdetails.save()
