@@ -95,6 +95,7 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
     'details',
+    'user_id'
 ]
 
 TEMPLATES = [

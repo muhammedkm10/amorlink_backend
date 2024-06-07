@@ -200,7 +200,14 @@ class ShowPreferences(APIView):
                         response_data['users'].append({"main_detail_of_user":serializer1.data,"basice_details":serializer2.data,"image":serializer3.data})
                   return Response(response_data)
             
-                  
+
+
+
+
+# showing details of other users to know more details
+class ProfileLookupView(APIView):
+      def get(self,request):
+            return Response({'message':"success"})
 
             
                 
