@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'authapp',
     'adminapp',
+    "matchesmanagementapp",
     'UserProfileapp',
     'corsheaders',
     'rest_framework_simplejwt',
@@ -95,8 +96,9 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
     'details',
-    'user_id'
+    'userid',
 ]
+
 
 TEMPLATES = [
     {

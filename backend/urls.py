@@ -24,8 +24,7 @@ urlpatterns = [
      path('authapp/', include('authapp.urls')),
      path('profileapp/', include('UserProfileapp.urls')),
      path('adminapp/', include('adminapp.urls')),
-
-
+     path('matchesmanagementapp/', include('matchesmanagementapp.urls')),
 
 ]
 

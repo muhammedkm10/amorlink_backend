@@ -64,8 +64,12 @@ class UserRegistration(APIView):
             # taking data to front end
             def get(self ,request):
                   token = request.headers.get('Authorization')
+                  lookupUserid = request.META.get('HTTP_USERID', None)
                   user_id ,email = convertjwt(token)
-                  user = CustomUser.objects.get(id = user_id)
+                  if lookupUserid is not None:
+                        user = CustomUser.objects.get(id = lookupUserid)
+                  else:
+                       user = CustomUser.objects.get(id = user_id)
                   usedetailsserializer = CustomUserSerializer(user)
                   if not user.is_superuser:
                         user_gallary = Gallary.objects.get(user_id = user)

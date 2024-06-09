@@ -17,12 +17,14 @@ from django.db.models import Q
 class UserProfileDetails(APIView):
     def get(self,request):
         details_header_value = request.META.get('HTTP_DETAILS', None)
-        token = request.headers.get('Authorization')
-        user_id ,email = convertjwt(token)
-        try:
-           user = CustomUser.objects.get(id = user_id)
-        except:
-            return Response({"message":"error"})
+        lookupUserid = request.META.get('HTTP_USERID', None)
+        print(lookupUserid)
+        if lookupUserid is not None:
+                user = CustomUser.objects.get(id = lookupUserid)
+        else:
+                token = request.headers.get('Authorization')
+                user_id ,email = convertjwt(token)
+                user = CustomUser.objects.get(id = user_id)
         if details_header_value == "basic_details":
             basic_details = BasicDetails.objects.get(user_id = user)
             serializer1 = CustomUserSerializer(user)
@@ -204,12 +206,7 @@ class ShowPreferences(APIView):
 
 
 
-# showing details of other users to know more details
-class ProfileLookupView(APIView):
-      def get(self,request):
-            return Response({'message':"success"})
 
-            
                 
                 
 
