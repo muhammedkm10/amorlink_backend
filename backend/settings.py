@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 import os
 from datetime import timedelta
 import datetime
+import stripe
 
 # Load environment variables from .env file
 load_dotenv()
@@ -256,3 +257,6 @@ MEDIA_URL = '/media/'
 
 
 
+# stripe integration
+
+STRIPE_SECRET_KEY = os.getenv('stripe_secret_key')

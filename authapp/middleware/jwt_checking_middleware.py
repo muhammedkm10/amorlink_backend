@@ -6,16 +6,18 @@ class JwtCheckingMiddleware:
 
     def __call__(self, request: HttpRequest):
         # Define the list of URLs to exclude from JWT checking
-        excluded_urls = ['/authapp/userlogin', '/authapp/usersignup','/authapp/api/token','/authapp/api/token/refresh','/authapp/otpverification']
+        excluded_urls = ['/authapp/userlogin', '/authapp/usersignup','/authapp/api/token','/authapp/api/token/refresh','/authapp/otpverification',]
         if request.method == "POST" and request.path in excluded_urls:
             response = self.get_response(request)
             return response
-        if request.path.startswith('/media/user_gallary'):
+        if request.path.startswith('/media/user_gallary') or request.path.startswith('/adminapp/payment-success') :
+            print('i am working ')
             response = self.get_response(request)
             return response
 
         # other requests that does need the jwt access token
         else:
+            print("secured part is working")
             response = self.get_response(request)
             auth_header = request.headers.get('Authorization')
             bearer_token = auth_header.split()

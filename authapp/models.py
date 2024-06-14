@@ -20,6 +20,7 @@ class CustomUser(AbstractUser):
     is_blocked = models.BooleanField(blank=True ,null=True)
     is_verified = models.BooleanField(blank=True ,null=True)
     male = models.BooleanField(null=True)
+    subscribed = models.BooleanField(default=False)
 
 
 

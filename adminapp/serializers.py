@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Subscription
+from .models import Subscription,SubscriptionDetails
 
 
 
@@ -15,4 +15,11 @@ class Add_Update_subscription(ModelSerializer):
 class Retrive_delete_subscription(ModelSerializer):
     class Meta:
         model = Subscription
+        fields = '__all__'
+
+# subscribed user details serializer
+
+class Subscribed_user_serializer(ModelSerializer):
+    class Meta:
+        model = SubscriptionDetails
         fields = '__all__'

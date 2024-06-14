@@ -22,39 +22,42 @@ class UserProfileDetails(APIView):
         print(lookupUserid)
         if lookupUserid is not None:
                 user = CustomUser.objects.get(id = lookupUserid)
+                subscribed = user.subscribed
         else:
                 token = request.headers.get('Authorization')
                 user_id ,email = convertjwt(token)
                 user = CustomUser.objects.get(id = user_id)
+                subscribed = user.subscribed
+
         if details_header_value == "basic_details":
             basic_details = BasicDetails.objects.get(user_id = user)
             serializer1 = CustomUserSerializer(user)
             serializer = BasicDetailseializer(basic_details)
-            return Response({"message":"success","basic_details":serializer.data,"userdetails":serializer1.data})
+            return Response({"message":"success","basic_details":serializer.data,"userdetails":serializer1.data,"subscribed":subscribed})
         elif details_header_value == "family_details":
             family_details = FamilyDetails.objects.get(user_id = user)
             serializer = FamilyDetailsseializer(family_details)
-            return Response({"message":"success","family_details":serializer.data})
+            return Response({"message":"success","family_details":serializer.data,"subscribed":subscribed})
         elif details_header_value == "location_details":
             location_details  = LocationDetails.objects.get(user_id = user)
             serializer = LocationDetailsseializer(location_details)
-            return Response({"message":"success","location_details":serializer.data})
+            return Response({"message":"success","location_details":serializer.data,"subscribed":subscribed})
         elif details_header_value == "partner_preferences":
             partner_preferences  = PatnerPreferences.objects.get(user_id = user)
             serializer = PatnerPreferencesDetailsseializer(partner_preferences)
-            return Response({"message":"success","partner_preferences":serializer.data})
+            return Response({"message":"success","partner_preferences":serializer.data,"subscribed":subscribed})
         elif details_header_value == "photos_gallary":
             photos_gallary  = Gallary.objects.get(user_id = user)
             serializer = Gallaryseializer(photos_gallary)
-            return Response({"message":"success","photos_gallary":serializer.data})
+            return Response({"message":"success","photos_gallary":serializer.data,"subscribed":subscribed})
         elif details_header_value == "profesional_details":
             profesional_details  = ProfessionalsDetails.objects.get(user_id = user)
             serializer = ProfessionalsDetailsseializer(profesional_details)
-            return Response({"message":"success","profesional_details":serializer.data})
+            return Response({"message":"success","profesional_details":serializer.data,"subscribed":subscribed})
         elif details_header_value == "religional_information":
             religional_information  = ReligionInformation.objects.get(user_id = user)
             serializer = ReligionInformationseializer(religional_information)
-            return Response({"message":"success","religional_information":serializer.data})
+            return Response({"message":"success","religional_information":serializer.data,"subscribed":subscribed})
         return Response({"message":"error"})
     def put(self,request):
         details_header_value = request.META.get('HTTP_DETAILS', None)
@@ -142,6 +145,8 @@ class ShowPreferences(APIView):
             token = request.headers.get('Authorization')
             user_id ,email = convertjwt(token)
             user = CustomUser.objects.get(id = user_id)
+            print("subscription",user.subscribed)
+            
             user_preferences = PatnerPreferences.objects.get(user_id_id = user.id)
 
 
@@ -164,7 +169,7 @@ class ShowPreferences(APIView):
             
             if details_header_value == "religion":
                   other_users = ReligionInformation.objects.filter(Q(religion = user_preferences.religion) | Q(cast = user_preferences.cast) ).exclude( Q(user_id = user.id)|Q(user_id__male = user.male))
-                  response_data = {"message":"success",'users':[]}
+                  response_data = {"message":"success",'users':[],"subscribed":user.subscribed}
 
                 #   checking for the preffered user is already present in the requested users al matched users
                   for user in other_users:
@@ -184,7 +189,7 @@ class ShowPreferences(APIView):
 
             elif details_header_value == "profession":
                   other_users = ProfessionalsDetails.objects.filter(Q(highest_education = user_preferences.highest_education)|Q(employed_in = user_preferences.employed_in)|Q(annual_income = user_preferences.annual_income)).exclude(Q(user_id = user.id)|Q(user_id__male = user.male))
-                  response_data = {"message":"success",'users':[]}
+                  response_data = {"message":"success",'users':[],"subscribed":user.subscribed}
                   for user in other_users:
                         if user.user_id.id  in requested_or_matched_ids:
                                 print(user.user_id.id)
@@ -205,7 +210,7 @@ class ShowPreferences(APIView):
             
             elif details_header_value == "personal":
                   other_users = BasicDetails.objects.filter(Q(age = user_preferences.patner_age)|Q(height = user_preferences.height)|Q(marital_status = user_preferences.marital_status)|Q(mother_toungue = user_preferences.mother_toungue)|Q(physical_status = user_preferences.physical_status)).exclude(Q(user_id = user.id)|Q(user_id__male = user.male))
-                  response_data = {"message":"success",'users':[]}
+                  response_data = {"message":"success",'users':[],"subscribed":user.subscribed}
                   for user in other_users:
                         if user.user_id.id  in requested_or_matched_ids:
                                 continue
@@ -222,7 +227,7 @@ class ShowPreferences(APIView):
             
             elif details_header_value == "lifestyle":
                   other_users = BasicDetails.objects.filter(Q(drinking_habits = user_preferences.drinking_habits)|Q(eating_habits = user_preferences.eating_habits)|Q(marital_status = user_preferences.marital_status)|Q(smalking_habits = user_preferences.smalking_habits)).exclude(Q(user_id = user.id)|Q(user_id__male = user.male))
-                  response_data = {"message":"success",'users':[]}
+                  response_data = {"message":"success",'users':[],"subscribed":user.subscribed}
                   for user in other_users:
                         if user.user_id.id  in requested_or_matched_ids:
                               continue

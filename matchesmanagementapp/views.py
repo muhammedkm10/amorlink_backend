@@ -67,10 +67,8 @@ class MatchView(APIView):
             if requested_for == "matched":
             #      other users requested to match current user accepted
                  requested_users = MatchRequests.objects.filter(match_id = user.id).exclude(request_accepted = False)
-                 print("requests from others",requested_users)
             #      you requested and others accepted
                  requested_by_current_user = MatchRequests.objects.filter(user_id = user.id).exclude(request_accepted = False)
-                 print("request from our side",requested_by_current_user)
                 
                  for i in  requested_users:
                         basice_details = CustomUser.objects.get(id = i.user_id.id)
@@ -102,8 +100,6 @@ class MatchView(APIView):
       def delete(self, request,id):
             token = request.headers.get('Authorization')
             user_id ,email = convertjwt(token)
-            print('coming user id',id)
-            print('current user id',user_id)
             obj = MatchRequests.objects.get(Q(Q(match_id = user_id)&Q(user_id = id))|Q(Q(match_id = id)&Q(user_id = user_id)))
             obj.delete()
 

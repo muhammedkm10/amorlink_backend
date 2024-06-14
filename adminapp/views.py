@@ -1,11 +1,20 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
-from .models import Subscription
-from .serializers import  Add_Update_subscription,Retrive_delete_subscription
+from .models import Subscription,SubscriptionDetails
+from .serializers import  Add_Update_subscription,Retrive_delete_subscription,Subscribed_user_serializer
 from authapp.models import CustomUser
 from authapp.serializers import CustomUserSerializer
+from django.utils import timezone
+from datetime import timedelta
 from rest_framework import status
+import os
+import stripe
+from django.conf import settings
+from authapp.utils import convertjwt
+from django.shortcuts import redirect
+
+
 
 # Create your views here.
 
@@ -63,7 +72,87 @@ class User_management(APIView):
     
   
 
+
+# paymentintent function for the payment
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+class Create_payment_intent(APIView):
+    def post(self,request,id):
+        token = request.headers.get('Authorization')
+        user_id ,email = convertjwt(token)
+        print("subscription id = ",id)
+        plan = Subscription.objects.get(id = id)
+  
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                line_items=[
+                    {
+                        'price': plan.stripe_price_id,
+                        'quantity': 1,
+                    },
+                ],
+                mode='payment',
+                success_url= f'http://127.0.0.1:8000/adminapp/payment-success/{user_id}/{id}/?session_id={{CHECKOUT_SESSION_ID}}',
+                cancel_url=f"{os.getenv('frontendUrl')}subscriptions"
+            )
+        except Exception as e:
+            return str(e)
+
+        return Response({'sessionId': checkout_session['id']},status=status.HTTP_200_OK)
+        
+
+# payment succesfull view
+
+class PaymentSuccessfull(APIView):
+    def get(self,request,user_id,plan_id):
+        current_date = timezone.now().date()
+        session_id = request.GET.get("session_id")
+        plan_details = Subscription.objects.get(id  = plan_id)
+        expiry_date  = current_date + timedelta(days=30 * plan_details.vlalidity_months )
+
+        data = {
+            "user_id" : user_id,
+            "plan" : plan_id,
+            "date_started" : current_date,
+            'expiry_date' : expiry_date,
+            "payment_session_id":session_id
+        }
+        user = CustomUser.objects.get(id = user_id)
+        user.subscribed = True
+        user.save()
+
+        serializer = Subscribed_user_serializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            print('some error occured')
+        return redirect(f"{os.getenv('frontendUrl')}thanks?payment_success=true&session_id={session_id}") 
+        
+        
+
+# getting the details of subscription for each users
+class Subscription_details(APIView):
+    def get(self,request):
+        token = request.headers.get('Authorization')
+        user_id ,email = convertjwt(token)
+        current_user = CustomUser.objects.get(id = user_id)
+        print(current_user.id)
+        if not current_user.subscribed:
+            queryset = Subscription.objects.all()
+            serializer = Retrive_delete_subscription(queryset,many=True)
+            return Response({"message":"not_subscribed",'subscription_details':serializer.data})
+        else :
+            subscription_details = SubscriptionDetails.objects.get(user_id = current_user)
+            plan_details = Subscription.objects.get(id = subscription_details.plan_id)
+            plan_details_serializer = Retrive_delete_subscription(plan_details)
+            serializer = Subscribed_user_serializer(subscription_details)
+            print(serializer.data)
+            return Response({"message":"subscription_details",'subscription_details':serializer.data,"plan_details":plan_details_serializer.data})
+
+
+
+        
     
 
-  
-    

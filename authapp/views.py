@@ -66,19 +66,29 @@ class UserRegistration(APIView):
                   token = request.headers.get('Authorization')
                   lookupUserid = request.META.get('HTTP_USERID', None)
                   user_id ,email = convertjwt(token)
+                  # 
                   if lookupUserid is not None:
-                        user = CustomUser.objects.get(id = lookupUserid)
+                        user1 = CustomUser.objects.get(id = lookupUserid)
+                        current_user = CustomUser.objects.get(id = user_id)
+                        subscribed = current_user.subscribed
+                        if not user1.is_superuser:
+                              user_gallary = Gallary.objects.get(user_id = user1)
+                              user_basic_details = BasicDetails.objects.get(user_id = user1)
+                              usedetailsserializer = CustomUserSerializer(user1)
+                              photoserializer = Gallaryseializer(user_gallary)
+                              basicuserserializer = BasicDetailseializer(user_basic_details)
+                              return Response({"message": "Success","user":usedetailsserializer.data,"usergallary":photoserializer.data,"basicdetails":basicuserserializer.data,"subscribed":subscribed})
                   else:
-                       user = CustomUser.objects.get(id = user_id)
-                  usedetailsserializer = CustomUserSerializer(user)
-                  if not user.is_superuser:
-                        user_gallary = Gallary.objects.get(user_id = user)
-                        user_basic_details = BasicDetails.objects.get(user_id = user)
+                        user = CustomUser.objects.get(id = user_id)
                         usedetailsserializer = CustomUserSerializer(user)
-                        photoserializer = Gallaryseializer(user_gallary)
-                        basicuserserializer = BasicDetailseializer(user_basic_details)
-                        return Response({"message": "Success","user":usedetailsserializer.data,"usergallary":photoserializer.data,"basicdetails":basicuserserializer.data})
-                  return Response({"message": "Success","user":usedetailsserializer.data})
+                        if not user.is_superuser:
+                              user_gallary = Gallary.objects.get(user_id = user)
+                              user_basic_details = BasicDetails.objects.get(user_id = user)
+                              usedetailsserializer = CustomUserSerializer(user)
+                              photoserializer = Gallaryseializer(user_gallary)
+                              basicuserserializer = BasicDetailseializer(user_basic_details)
+                              return Response({"message": "Success","user":usedetailsserializer.data,"usergallary":photoserializer.data,"basicdetails":basicuserserializer.data})
+                        return Response({"message": "Success","user":usedetailsserializer.data})
       #      function for the edit the data in the main details in  user profile
             def put(self,request):
                   token = request.headers.get('Authorization')
