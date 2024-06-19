@@ -9,7 +9,7 @@ urlpatterns = [
 
     # payment gateway urls
 
-    path("create_checkout_session/<int:id>",views.Create_payment_intent.as_view()),
+    path("create_checkout_session/<int:validity_months>",views.Create_payment_intent.as_view()),
 
     # payment succesfull
     path('payment-success/<int:user_id>/<int:plan_id>/',views.PaymentSuccessfull.as_view()),

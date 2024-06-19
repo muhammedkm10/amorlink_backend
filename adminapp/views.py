@@ -13,6 +13,8 @@ import stripe
 from django.conf import settings
 from authapp.utils import convertjwt
 from django.shortcuts import redirect
+from urllib.parse import urlencode
+
 
 
 
@@ -79,11 +81,18 @@ class User_management(APIView):
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 class Create_payment_intent(APIView):
-    def post(self,request,id):
+    def post(self,request,validity_months):
+        details_header_value = request.headers.get('details', None)
+        print("HEADER VALUE",details_header_value)
+        if details_header_value is  not None:
+            payment_type = 'upgrade'
+        else:
+            payment_type = 'normal'
+
+
         token = request.headers.get('Authorization')
         user_id ,email = convertjwt(token)
-        print("subscription id = ",id)
-        plan = Subscription.objects.get(id = id)
+        plan = Subscription.objects.get(vlalidity_months = validity_months)
   
         try:
             checkout_session = stripe.checkout.Session.create(
@@ -94,12 +103,13 @@ class Create_payment_intent(APIView):
                     },
                 ],
                 mode='payment',
-                success_url= f'http://127.0.0.1:8000/adminapp/payment-success/{user_id}/{id}/?session_id={{CHECKOUT_SESSION_ID}}',
+                
+
+                success_url= f'http://127.0.0.1:8000/adminapp/payment-success/{user_id}/{plan.id}/?{urlencode({"session_id": "{{CHECKOUT_SESSION_ID}}", "payment_type": payment_type ,"validity_months":validity_months})}',
                 cancel_url=f"{os.getenv('frontendUrl')}subscriptions"
             )
         except Exception as e:
             return str(e)
-
         return Response({'sessionId': checkout_session['id']},status=status.HTTP_200_OK)
         
 
@@ -107,8 +117,22 @@ class Create_payment_intent(APIView):
 
 class PaymentSuccessfull(APIView):
     def get(self,request,user_id,plan_id):
-        current_date = timezone.now().date()
+        payment_type = request.GET.get('payment_type')
+        print('payment type',payment_type)
+        validity_months = request.GET.get('validity_months')
         session_id = request.GET.get("session_id")
+        # upgrading plan
+        if payment_type == "upgrade":
+            current_plan = SubscriptionDetails.objects.get(user_id = user_id)
+            print(current_plan)
+            plan = Subscription.objects.get(vlalidity_months = validity_months)
+            print(plan.amount)
+            current_plan.expiry_date += timedelta(days = 30 *plan.vlalidity_months)
+            current_plan.plan_id = plan_id
+            current_plan.save()
+            return redirect(f"{os.getenv('frontendUrl')}thanks?payment_success=true&session_id={session_id}") 
+        # adding new plan
+        current_date = timezone.now().date()
         plan_details = Subscription.objects.get(id  = plan_id)
         expiry_date  = current_date + timedelta(days=30 * plan_details.vlalidity_months )
 
@@ -129,6 +153,7 @@ class PaymentSuccessfull(APIView):
         else:
             print('some error occured')
         return redirect(f"{os.getenv('frontendUrl')}thanks?payment_success=true&session_id={session_id}") 
+    
         
         
 
@@ -138,7 +163,6 @@ class Subscription_details(APIView):
         token = request.headers.get('Authorization')
         user_id ,email = convertjwt(token)
         current_user = CustomUser.objects.get(id = user_id)
-        print(current_user.id)
         if not current_user.subscribed:
             queryset = Subscription.objects.all()
             serializer = Retrive_delete_subscription(queryset,many=True)
@@ -150,6 +174,11 @@ class Subscription_details(APIView):
             serializer = Subscribed_user_serializer(subscription_details)
             print(serializer.data)
             return Response({"message":"subscription_details",'subscription_details':serializer.data,"plan_details":plan_details_serializer.data})
+    def patch(self,request):
+        token = request.headers.get("Authorization")
+        user_id ,email = convertjwt(token)
+        current_user = CustomUser.objects.get(id = user_id)
+        return Response({'message':"success"})
 
 
 

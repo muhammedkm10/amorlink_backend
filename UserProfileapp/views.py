@@ -19,7 +19,6 @@ class UserProfileDetails(APIView):
     def get(self,request):
         details_header_value = request.META.get('HTTP_DETAILS', None)
         lookupUserid = request.META.get('HTTP_USERID', None)
-        print(lookupUserid)
         if lookupUserid is not None:
                 user = CustomUser.objects.get(id = lookupUserid)
                 subscribed = user.subscribed
@@ -28,7 +27,6 @@ class UserProfileDetails(APIView):
                 user_id ,email = convertjwt(token)
                 user = CustomUser.objects.get(id = user_id)
                 subscribed = user.subscribed
-
         if details_header_value == "basic_details":
             basic_details = BasicDetails.objects.get(user_id = user)
             serializer1 = CustomUserSerializer(user)
