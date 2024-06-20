@@ -16,6 +16,7 @@ urlpatterns = [
 
     # subscription details user side
     path('subscription_details',views.Subscription_details.as_view()),
+
     
 
     

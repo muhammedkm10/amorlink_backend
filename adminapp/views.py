@@ -15,8 +15,7 @@ from authapp.utils import convertjwt
 from django.shortcuts import redirect
 from urllib.parse import urlencode
 
-
-
+# from .tasks import fun
 
 # Create your views here.
 
@@ -182,6 +181,4 @@ class Subscription_details(APIView):
 
 
 
-        
-    
 
