@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from rest_framework import generics
+from django.contrib.auth import  login
 from rest_framework.views import APIView
 from .models import CustomUser
 from rest_framework import status
@@ -149,7 +149,8 @@ class Login(APIView):
                   else:
                        if user.is_verified:
                              if not user.is_blocked:
-                                  return Response({"message":"userfound","role":"user"},status=status.HTTP_200_OK) 
+                                  login(request, user)
+                                  return Response({"message":"userfound","role":"user",'id':user.id},status=status.HTTP_200_OK) 
                              else:
                               return Response({"error":"blocked"},status=status.HTTP_400_BAD_REQUEST) 
                                    

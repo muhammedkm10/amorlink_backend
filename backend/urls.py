@@ -25,6 +25,8 @@ urlpatterns = [
      path('profileapp/', include('UserProfileapp.urls')),
      path('adminapp/', include('adminapp.urls')),
      path('matchesmanagementapp/', include('matchesmanagementapp.urls')),
+     path('chatapp/', include('chatapp.urls')),
+
 
 ]
 

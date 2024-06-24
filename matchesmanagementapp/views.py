@@ -37,11 +37,9 @@ class MatchView(APIView):
             user_id ,email = convertjwt(token)
             user = CustomUser.objects.get(id = user_id)
             requested_users = MatchRequests.objects.none()
-            print(user.id)
             user_details = []
             user_details1 = []
             user_details2 = []
-
             if requested_for == "my_requests":
                   current_user_requestes = MatchRequests.objects.filter(user_id = user).exclude(request_accepted = True)
                   for i in  current_user_requestes:
@@ -83,7 +81,6 @@ class MatchView(APIView):
                         image_details = Gallary.objects.get(user_id = basice_details)
                         image_serializer = Gallaryseializer(instance=image_details,many=False)
                         user_details.append({"id":basice_details_serializer.data['id'],"name":basice_details_serializer.data['username'],"image_details":image_serializer.data['image1']})
-                 print(user_details)
                  return Response({'message':'success','users':user_details},status=status.HTTP_200_OK)
             
             if not requested_users.exists():

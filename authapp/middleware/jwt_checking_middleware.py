@@ -10,17 +10,12 @@ class JwtCheckingMiddleware:
         if request.method == "POST" and request.path in excluded_urls:
             response = self.get_response(request)
             return response
-        if request.path.startswith('/media/user_gallary') or request.path.startswith('/adminapp/payment-success') or request.path.startswith('/adminapp') :
-            print('i am working ')
+        if request.path.startswith('/media/user_gallary') or request.path.startswith('/adminapp/payment-success')  :
             response = self.get_response(request)
             return response
 
         # other requests that does need the jwt access token
         else:
-            response = self.get_response(request)
-
-            return response
-            print("secured part is working")
             response = self.get_response(request)
             auth_header = request.headers.get('Authorization')
             bearer_token = auth_header.split()

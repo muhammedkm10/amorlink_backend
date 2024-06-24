@@ -40,6 +40,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+     "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,13 +50,15 @@ INSTALLED_APPS = [
     'rest_framework',
     'authapp',
     'adminapp',
+    'chatapp',
     "matchesmanagementapp",
     'UserProfileapp',
-     'django_celery_beat',
-     'django_celery_results',
+    'django_celery_beat',
+    'django_celery_results',
     'corsheaders',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+     'channels',
 
 ]
 
@@ -75,8 +78,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'backend.urls'
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    'http://localhost:5173'
+    'http://localhost:5173',
 ]
 
 CORS_ALLOW_METHODS = [
@@ -273,3 +275,16 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 
 CELERY_BEAT_SCHEDULER='django_celery_beat.schedulers:DatabaseScheduler'
+
+
+# chat app configurations
+
+ASGI_APPLICATION = "backend.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
