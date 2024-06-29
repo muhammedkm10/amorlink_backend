@@ -21,10 +21,9 @@ class MatchedUsersForChat(APIView):
 
 
 
-# notification view
+# notification view for chat
 class Notification(APIView):
         def post(self,request,sender,reciverid):
-            print(request.data)
             details_header_value = request.data.get('headers')
             message = details_header_value["details"]
             sender =  CustomUser.objects.get(id = sender)

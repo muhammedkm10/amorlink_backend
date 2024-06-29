@@ -6,13 +6,14 @@ from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
+
+# chat consumer
 class PersonalChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         query_params = dict(parse_qs(self.scope['query_string'].decode()))
 
         # Extract user_id and receiver_id from the query parameters
         if query_params.get('receiver_id', [None])[0] == "null":
-             print('not possible')
              self.room_group_name = None
         else:
             user_id = int(query_params.get('user_id', [None])[0])
@@ -27,7 +28,6 @@ class PersonalChatConsumer(AsyncWebsocketConsumer):
                     self.room_group_name,
                     self.channel_name
                 )
-            print(self.room_group_name)
             await self.accept()
             print("Connection accepted")
             await self.send(text_data=self.room_group_name)
@@ -38,7 +38,6 @@ class PersonalChatConsumer(AsyncWebsocketConsumer):
                     self.room_group_name,
                     self.channel_layer
                 )
-                print("Connection closed")
             else:
                  print("no users")
 
@@ -46,14 +45,9 @@ class PersonalChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
-        print('json data',text_data_json)
         message = text_data_json['content']
         userId = text_data_json['sender']
         reciever_id = text_data_json['receiver']
-        
-
-        print("my message from front end",message)
-        # await self.save_message(message)
         await self.save_message(userId,reciever_id,message,self.room_group_name)
         await self.channel_layer.group_send(
               self.room_group_name,
@@ -69,9 +63,6 @@ class PersonalChatConsumer(AsyncWebsocketConsumer):
         content = event['content']
         sender = event['sender']
         receiver = event['receiver']
-
-        print("event",event)
-        print("to the  front end",content)
         await self.send(text_data=json.dumps({
             'content': content,
             "sender":sender,
@@ -93,9 +84,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         query_params = dict(parse_qs(self.scope['query_string'].decode()))
         user_id = int(query_params.get('user_id', [None])[0])
-        print("current logined user",user_id)
         self.room_name = f'{user_id}_room'
-        print(self.room_name)
         self.room_group_name = f'notification_{user_id}'
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -117,15 +106,11 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     
     async def send_notification(self, event):
         notification = event['notification']
-        print(f"Notification event received: {notification}")
-        
         await self.send(text_data=json.dumps({
             'notification': notification
         }))
 
 def send_notification_to_user(user_id,notification_message):
-    print("i am working",user_id)
-
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         f'notification_{user_id}',
