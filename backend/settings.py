@@ -133,8 +133,8 @@ DATABASES = {
         'NAME': os.getenv('database_name'),
         'USER': os.getenv('database_user'),
         'PASSWORD': os.getenv('database_password'),
-        'HOST': 'localhost',  # Set to empty string for localhost
-        'PORT': '5432',       # Default PostgreSQL port
+        'HOST': 'db',  # Set to empty string for localhost
+        'PORT': 5432,       # Default PostgreSQL port
     }
 }
 
@@ -268,7 +268,7 @@ STRIPE_SECRET_KEY = os.getenv('stripe_secret_key')
 
 # celery settings
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379/'
+CELERY_BROKER_URL = 'redis://redis:6379/' 
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
