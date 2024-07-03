@@ -64,9 +64,8 @@ class UserRegistration(APIView):
             # taking data to front end
             def get(self ,request):
                   token = request.headers.get('Authorization')
-                  lookupUserid = request.META.get('HTTP_USERID', None)
+                  lookupUserid = request.META.get('HTTP_LOOKUPUSERID', None)
                   user_id ,email = convertjwt(token)
-                  # 
                   if lookupUserid is not None:
                         user1 = CustomUser.objects.get(id = lookupUserid)
                         current_user = CustomUser.objects.get(id = user_id)
@@ -77,8 +76,8 @@ class UserRegistration(APIView):
                               usedetailsserializer = CustomUserSerializer(user1)
                               photoserializer = Gallaryseializer(user_gallary)
                               basicuserserializer = BasicDetailseializer(user_basic_details)
-                              return Response({"message": "Success","user":usedetailsserializer.data,"usergallary":photoserializer.data,"basicdetails":basicuserserializer.data,"subscribed":subscribed})
-                  else:
+                              return Response({"message": "success","user":usedetailsserializer.data,"usergallary":photoserializer.data,"basicdetails":basicuserserializer.data,"subscribed":subscribed})
+                  elif lookupUserid is  None:
                         user = CustomUser.objects.get(id = user_id)
                         usedetailsserializer = CustomUserSerializer(user)
                         if not user.is_superuser:
@@ -88,13 +87,12 @@ class UserRegistration(APIView):
                               photoserializer = Gallaryseializer(user_gallary)
                               basicuserserializer = BasicDetailseializer(user_basic_details)
                               return Response({"message": "Success","user":usedetailsserializer.data,"usergallary":photoserializer.data,"basicdetails":basicuserserializer.data})
-                        return Response({"message": "Success","user":usedetailsserializer.data})
+                        return Response({"message": "success","user":usedetailsserializer.data})
       #      function for the edit the data in the main details in  user profile
             def put(self,request):
                   token = request.headers.get('Authorization')
                   user_id ,email = convertjwt(token)
                   user = CustomUser.objects.get(id = user_id)
-                  print(request.data)
                   if "name" in request.data.keys():
                       name1 = request.data['name']
                       user.username = name1

@@ -40,6 +40,8 @@ class MatchView(APIView):
             user_details = []
             user_details1 = []
             user_details2 = []
+            if not user.subscribed:
+                  return Response({'message':'not subscribes'},status=status.HTTP_204_NO_CONTENT)
             if requested_for == "my_requests":
                   current_user_requestes = MatchRequests.objects.filter(user_id = user).exclude(request_accepted = True)
                   for i in  current_user_requestes:

@@ -29,7 +29,6 @@ class PersonalChatConsumer(AsyncWebsocketConsumer):
                     self.channel_name
                 )
             await self.accept()
-            print("Connection accepted")
             await self.send(text_data=self.room_group_name)
 
     async def disconnect(self, close_code):

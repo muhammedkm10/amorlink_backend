@@ -1,5 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 from .models import Subscription,SubscriptionDetails
+from authapp.serializers import CustomUserSerializer
 
 
 
@@ -23,3 +24,12 @@ class Subscribed_user_serializer(ModelSerializer):
     class Meta:
         model = SubscriptionDetails
         fields = '__all__'
+
+class Subscriptiondetails_related_serializer(ModelSerializer):
+    user_id = CustomUserSerializer()
+    plan  = Retrive_delete_subscription()
+    class Meta:
+        model = SubscriptionDetails
+        fields = ['plan',"user_id","date_started"]
+
+

@@ -101,8 +101,10 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
     'details',
-    'userid',
+    'lookupuserid',
+    'type'
 ]
+
 
 
 TEMPLATES = [
@@ -284,7 +286,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("redis", 6379)], 
         },
     },
 }

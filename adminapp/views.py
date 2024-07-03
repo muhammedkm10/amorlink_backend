@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
 from .models import Subscription,SubscriptionDetails
-from .serializers import  Add_Update_subscription,Retrive_delete_subscription,Subscribed_user_serializer
+from .serializers import  Add_Update_subscription,Retrive_delete_subscription,Subscribed_user_serializer,Subscriptiondetails_related_serializer
 from authapp.models import CustomUser
 from authapp.serializers import CustomUserSerializer
 from django.utils import timezone
@@ -14,6 +14,7 @@ from django.conf import settings
 from authapp.utils import convertjwt
 from django.shortcuts import redirect
 from urllib.parse import urlencode
+from django.db.models import Sum
 
 # from .tasks import fun
 
@@ -39,7 +40,6 @@ class Add_List_subscription(generics.ListCreateAPIView, generics.UpdateAPIView):
         instance = self.get_object()             #taking the object from the database that is to be updated
         serializer = self.get_serializer(instance,data = request.data,partial = partial)   #seializing the incoming data and the retrieved object
         serializer.is_valid(raise_exception = True)
-        print(serializer.is_valid)
         self.update_function(serializer)   #calling the function with the data that is to be updated
         return Response({"message":"success"},status=status.HTTP_201_CREATED)
     def update_function(self,serializer):
@@ -82,7 +82,6 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 class Create_payment_intent(APIView):
     def post(self,request,validity_months):
         details_header_value = request.headers.get('details', None)
-        print("HEADER VALUE",details_header_value)
         if details_header_value is  not None:
             payment_type = 'upgrade'
         else:
@@ -117,15 +116,12 @@ class Create_payment_intent(APIView):
 class PaymentSuccessfull(APIView):
     def get(self,request,user_id,plan_id):
         payment_type = request.GET.get('payment_type')
-        print('payment type',payment_type)
         validity_months = request.GET.get('validity_months')
         session_id = request.GET.get("session_id")
         # upgrading plan
         if payment_type == "upgrade":
             current_plan = SubscriptionDetails.objects.get(user_id = user_id)
-            print(current_plan)
             plan = Subscription.objects.get(vlalidity_months = validity_months)
-            print(plan.amount)
             current_plan.expiry_date += timedelta(days = 30 *plan.vlalidity_months)
             current_plan.plan_id = plan_id
             current_plan.save()
@@ -151,7 +147,7 @@ class PaymentSuccessfull(APIView):
             serializer.save()
         else:
             print('some error occured')
-        return redirect(f"{os.getenv('frontendUrl')}thanks?payment_success=true&session_id={session_id}") 
+        return redirect(f"{os.getenv('f/rontendUrl')}thanks?payment_success=true&session_id={session_id}") 
     
         
         
@@ -171,13 +167,59 @@ class Subscription_details(APIView):
             plan_details = Subscription.objects.get(id = subscription_details.plan_id)
             plan_details_serializer = Retrive_delete_subscription(plan_details)
             serializer = Subscribed_user_serializer(subscription_details)
-            print(serializer.data)
             return Response({"message":"subscription_details",'subscription_details':serializer.data,"plan_details":plan_details_serializer.data})
     def patch(self,request):
         token = request.headers.get("Authorization")
         user_id ,email = convertjwt(token)
         current_user = CustomUser.objects.get(id = user_id)
         return Response({'message':"success"})
+    
+class AdminDashboard(APIView):
+    def get(self,request):
+        dashboard_details = {}
+        total_users = CustomUser.objects.filter(is_superuser = False).count()
+        dashboard_details['total_users'] = total_users
+        subscribed = CustomUser.objects.filter(subscribed = True,is_superuser = False).count()
+        dashboard_details['subcribed'] = subscribed
+        non_subscribers =  CustomUser.objects.filter(subscribed = False,is_superuser = False).count()
+        dashboard_details['non_subscribed'] = non_subscribers
+        total_amount = SubscriptionDetails.objects.aggregate(sum = Sum("plan__amount"))
+        dashboard_details["total_amount"] = total_amount["sum"]
+        six_month = SubscriptionDetails.objects.filter(plan__plan_name = "silver").aggregate(sum = Sum("plan__amount"))
+        if six_month['sum'] is None:
+            dashboard_details['six_month'] = 0
+        else:
+            dashboard_details['six_month'] = six_month["sum"]
+        one_year = SubscriptionDetails.objects.filter(plan__plan_name = "gold").aggregate(sum = Sum("plan__amount"))
+        if one_year["sum"] is None:
+            dashboard_details['one_year'] = 0
+        else:
+            dashboard_details['one_year'] = one_year["sum"]
+        subscription_details = SubscriptionDetails.objects.select_related('user_id','plan').all()
+        serializer = Subscriptiondetails_related_serializer(subscription_details,many=True)
+        return Response({"message":'success',"data":serializer.data,"dashboard_details":dashboard_details})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
