@@ -147,7 +147,7 @@ class PaymentSuccessfull(APIView):
             serializer.save()
         else:
             print('some error occured')
-        return redirect(f"{os.getenv('f/rontendUrl')}thanks?payment_success=true&session_id={session_id}") 
+        return redirect(f"{os.getenv('frontendUrl')}thanks?payment_success=true&session_id={session_id}") 
     
         
         

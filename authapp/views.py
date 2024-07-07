@@ -15,6 +15,7 @@ from datetime import datetime
 from UserProfileapp.serializer import Gallaryseializer,BasicDetailseializer
 import base64
 from django.core.files.base import ContentFile
+from chatapp.models import Notifications
 
 # Create your views here.
 
@@ -81,13 +82,16 @@ class UserRegistration(APIView):
                         user = CustomUser.objects.get(id = user_id)
                         usedetailsserializer = CustomUserSerializer(user)
                         if not user.is_superuser:
+                              notification_count = Notifications.objects.filter(receiver = user,seen = False).count()
                               user_gallary = Gallary.objects.get(user_id = user)
                               user_basic_details = BasicDetails.objects.get(user_id = user)
                               usedetailsserializer = CustomUserSerializer(user)
                               photoserializer = Gallaryseializer(user_gallary)
                               basicuserserializer = BasicDetailseializer(user_basic_details)
-                              return Response({"message": "Success","user":usedetailsserializer.data,"usergallary":photoserializer.data,"basicdetails":basicuserserializer.data})
+                              return Response({"message": "Success","user":usedetailsserializer.data,"usergallary":photoserializer.data,"basicdetails":basicuserserializer.data,"notification_count":notification_count})
                         return Response({"message": "success","user":usedetailsserializer.data})
+
+
       #      function for the edit the data in the main details in  user profile
             def put(self,request):
                   token = request.headers.get('Authorization')

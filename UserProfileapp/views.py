@@ -160,7 +160,7 @@ class ShowPreferences(APIView):
                   if user_preferences.religion is None and user_preferences.cast is None:
                         return Response({"message":"success",'users':[],"subscribed":user.subscribed})
                 
-                  other_users = ReligionInformation.objects.filter(Q(religion = user_preferences.religion)|Q(cast = user_preferences.cast) ).exclude( Q(user_id = user.id)|Q(user_id__male = user.male))
+                  other_users = ReligionInformation.objects.filter(Q(religion = user_preferences.religion)|Q(cast = user_preferences.cast) ).exclude( Q(user_id = user.id)|Q(user_id__male = user.male)|Q(user_id__is_blocked = True))
                   response_data = {"message":"success",'users':[],"subscribed":user.subscribed}
                 #   checking for the preffered user is already present in the requested users al matched users
                   for user in other_users:
@@ -179,7 +179,7 @@ class ShowPreferences(APIView):
             elif details_header_value == "profession":
                   if user_preferences.highest_education is None and user_preferences.employed_in is None and user_preferences.annual_income is None :
                         return Response({"message":"success",'users':[],"subscribed":user.subscribed})
-                  other_users = ProfessionalsDetails.objects.filter(Q(highest_education = user_preferences.highest_education)|Q(employed_in = user_preferences.employed_in)|Q(annual_income = user_preferences.annual_income)).exclude(Q(user_id = user.id)|Q(user_id__male = user.male))
+                  other_users = ProfessionalsDetails.objects.filter(Q(highest_education = user_preferences.highest_education)|Q(employed_in = user_preferences.employed_in)|Q(annual_income = user_preferences.annual_income)).exclude(Q(user_id = user.id)|Q(user_id__male = user.male)|Q(user_id__is_blocked = True))
                   response_data = {"message":"success",'users':[],"subscribed":user.subscribed}
                   for user in other_users:
                         if user.user_id.id  in requested_or_matched_ids:
@@ -198,7 +198,7 @@ class ShowPreferences(APIView):
             elif details_header_value == "personal":
                   if user_preferences.patner_age is None and user_preferences.height is None and user_preferences.marital_status is None and user_preferences.mother_toungue is None and user_preferences.physical_status is None:
                         return Response({"message":"success",'users':[],"subscribed":user.subscribed})
-                  other_users = BasicDetails.objects.filter(Q(age = user_preferences.patner_age)|Q(height = user_preferences.height)|Q(marital_status = user_preferences.marital_status)|Q(mother_toungue = user_preferences.mother_toungue)|Q(physical_status = user_preferences.physical_status)).exclude(Q(user_id = user.id)|Q(user_id__male = user.male))
+                  other_users = BasicDetails.objects.filter(Q(age = user_preferences.patner_age)|Q(height = user_preferences.height)|Q(marital_status = user_preferences.marital_status)|Q(mother_toungue = user_preferences.mother_toungue)|Q(physical_status = user_preferences.physical_status)).exclude(Q(user_id = user.id)|Q(user_id__male = user.male)|Q(user_id__is_blocked = True))
                   response_data = {"message":"success",'users':[],"subscribed":user.subscribed}
                   for user in other_users:
                         if user.user_id.id  in requested_or_matched_ids:
@@ -217,7 +217,7 @@ class ShowPreferences(APIView):
             elif details_header_value == "lifestyle":
                   if user_preferences.drinking_habits is None and user_preferences.eating_habits is None and user_preferences.smalking_habits is None:
                         return Response({"message":"success",'users':[],"subscribed":user.subscribed})
-                  other_users = BasicDetails.objects.filter(Q(drinking_habits = user_preferences.drinking_habits)|Q(eating_habits = user_preferences.eating_habits)|Q(smalking_habits = user_preferences.smalking_habits)).exclude(Q(user_id = user.id)|Q(user_id__male = user.male))
+                  other_users = BasicDetails.objects.filter(Q(drinking_habits = user_preferences.drinking_habits)|Q(eating_habits = user_preferences.eating_habits)|Q(smalking_habits = user_preferences.smalking_habits)).exclude(Q(user_id = user.id)|Q(user_id__male = user.male)|Q(user_id__is_blocked= True))
                   response_data = {"message":"success",'users':[],"subscribed":user.subscribed}
                   for user in other_users:
                         if user.user_id.id  in requested_or_matched_ids:
@@ -232,6 +232,7 @@ class ShowPreferences(APIView):
                                 serializer3 = Gallaryseializer(image)
                                 response_data['users'].append({"main_detail_of_user":serializer1.data,"basice_details":serializer2.data,"image":serializer3.data})
                   return Response(response_data)
+             
             
 
 

@@ -105,16 +105,28 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     
     async def send_notification(self, event):
         notification = event['notification']
+        notification_for = event['notification_for']
+        print("my notification for",notification_for)
+        
+        print("my notificatios",notification)
         await self.send(text_data=json.dumps({
+            'notification_for': notification_for,
             'notification': notification
+
         }))
 
-def send_notification_to_user(user_id,notification_message):
+def send_notification_to_user(user_id,notification_message,matchrequest):
     channel_layer = get_channel_layer()
+    
     async_to_sync(channel_layer.group_send)(
         f'notification_{user_id}',
         {
             'type': 'send_notification',
             'notification': notification_message,
+            "notification_for":matchrequest
         }
     )
+
+
+
+
