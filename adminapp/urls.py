@@ -18,7 +18,10 @@ urlpatterns = [
     path('subscription_details',views.Subscription_details.as_view()),
 
     # admin dashboard url
-    path('dashboard',views.AdminDashboard.as_view())
+    path('dashboard',views.AdminDashboard.as_view()),
+
+    # matchshowing url for each users
+    path('users_matches/<int:user_id>/',views.DisplayMatches.as_view())
 
     
 

@@ -1,6 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from .models import Subscription,SubscriptionDetails
 from authapp.serializers import CustomUserSerializer
+from matchesmanagementapp.models import MatchRequests
 
 
 
@@ -31,5 +32,13 @@ class Subscriptiondetails_related_serializer(ModelSerializer):
     class Meta:
         model = SubscriptionDetails
         fields = ['plan',"user_id","date_started"]
+
+
+# serializer for the related  matches table
+class MatchRequestsseializer_for_related_table(ModelSerializer):
+    match_id = CustomUserSerializer()
+    class Meta:
+        model = MatchRequests
+        fields = ["match_id"]
 
 
