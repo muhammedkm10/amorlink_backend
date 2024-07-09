@@ -16,4 +16,4 @@ COPY . .
 EXPOSE 8000
 
 # Start Gunicorn
-CMD ["gunicorn", "--bind", ":8000", "myproject.wsgi:application"]
+CMD ["gunicorn", "--bind", ":8000", "backend.wsgi:application"]
