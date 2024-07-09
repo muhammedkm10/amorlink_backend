@@ -59,3 +59,4 @@ urllib3==2.2.1
 vine==5.1.0
 wcwidth==0.2.13
 zope.interface==6.4.post2
+gunicorn ==20.1.0
