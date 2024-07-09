@@ -79,7 +79,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'backend.urls'
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
+    'https://amorlink.vercel.app',
 ]
 
 CORS_ALLOW_METHODS = [
