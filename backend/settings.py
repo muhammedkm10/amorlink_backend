@@ -32,7 +32,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-q2at82iwysz7o!=(wz!$lkpazl4x7bbij+t_n1=*=eomcb6kpp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['54.163.208.92']
 
@@ -133,8 +133,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DATABASE_NAME', 'amorlink'),  # Replace 'default_db_name' with a sensible default if necessary
-        'USER': os.getenv('DATABASE_USER', 'postgres'),  # Replace 'default_db_user' with a sensible default if necessary
+        'NAME': os.getenv('DATABASE_NAME', 'amorlink'), 
+        'USER': os.getenv('DATABASE_USER', 'postgres'),  
         'PASSWORD': os.getenv('DATABASE_PASSWORD', 'Rabimammi2906$$$'),  
         'HOST': 'db',  # Set to empty string for localhost
         'PORT': 5432,       # Default PostgreSQL port
