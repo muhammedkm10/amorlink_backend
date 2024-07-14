@@ -3,13 +3,14 @@ version: '3.9'
 services:
   web:
     build: .
-    command: ["daphne", "-u", "/tmp/daphne.sock", "backend.asgi:application"]
+    command: ["daphne", "-b", "0.0.0.0", "-p", "8000", "backend.asgi:application"]
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
+      - redis
     env_file:
       - .env
     networks:
@@ -56,8 +57,6 @@ services:
       - "6379:6379"
     networks:
       - backend-network
-
-  
 
 volumes:
   db_data:

@@ -15,5 +15,5 @@ COPY . .
 # Expose the necessary port
 EXPOSE 8000
 
-# Start Gunicorn
-CMD ["daphne", "-u", "/tmp/daphne.sock", "backend.asgi:application"]
+# Start Daphne
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "backend.asgi:application"]
