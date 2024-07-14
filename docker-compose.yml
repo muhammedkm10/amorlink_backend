@@ -61,8 +61,8 @@ services:
   nginx:
       image: nginx:latest
       volumes:
-        - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-        - /etc/letsencrypt:/etc/letsencrypt:ro  # Mount letsencrypt if needed
+       - ./nginx-config/example.com.conf:/etc/nginx/conf.d/nginxconfiguration
+        # - /etc/letsencrypt:/etc/letsencrypt:ro  # Mount letsencrypt if needed
       ports:
         - "8080:80"
         - "8443:443"
