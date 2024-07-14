@@ -3,7 +3,7 @@ version: '3.9'
 services:
   web:
     build: .
-    command: ["daphne", "-b", "0.0.0.0", "-p", "8000", "backend.asgi:application"]
+    command: ["gunicorn", "-b", "0.0.0.0:8000", "backend.wsgi:application"]
     volumes:
       - .:/app
     expose:
