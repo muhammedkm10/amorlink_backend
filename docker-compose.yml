@@ -58,16 +58,16 @@ services:
     networks:
       - backend-network
 
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
-      - /etc/letsencrypt:/etc/letsencrypt
-    ports:
-      - "8080:80"
-      - "8443:443"
-    depends_on:
-      - web
+  # nginx:
+  #   image: nginx:latest
+  #   volumes:
+  #     - ./nginx:/etc/nginx/conf.d
+  #     - /etc/letsencrypt:/etc/letsencrypt
+  #   ports:
+  #     - "8080:80"
+  #     - "8443:443"
+  #   depends_on:
+  #     - web
 
 
 volumes:
