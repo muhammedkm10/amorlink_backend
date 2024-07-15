@@ -9,8 +9,8 @@ COPY requirements.txt .
 RUN python -m pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Install Gunicorn
-RUN pip install gunicorn
+# Install Daphne
+RUN pip install daphne
 
 # Copy the rest of the application code
 COPY . .
@@ -18,5 +18,5 @@ COPY . .
 # Expose the necessary port
 EXPOSE 8000
 
-# Start Gunicorn
-CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "backend.asgi:application"]
+# Start Daphne
+CMD ["daphne", "-u", "/tmp/daphne.sock", "backend.asgi:application"]
