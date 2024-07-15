@@ -9,10 +9,10 @@ import random
 
 # Create your models here.
 class CustomUser(AbstractUser):
-    # USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'email'
     email = models.EmailField(unique=True, blank=True)
     REQUIRED_FIELDS = []
-    username = models.CharField(max_length=150, blank=True,unique=True)
+    username = models.CharField(max_length=150, blank=True)
     phone = models.CharField(max_length=20, blank=True , null=True)
     account_for = models.CharField(max_length=20, blank=True,null=True)
     about_groom  = models.TextField(null=True,blank=True)
