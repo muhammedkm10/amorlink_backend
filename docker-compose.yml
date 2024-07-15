@@ -56,7 +56,10 @@ services:
     command:
       - daphne
       - --bind=localhost:8002  # Bind address and port for Daphne
-      - backend.asgi:application  
+      - backend.asgi:application 
+      - backend.asgi:application
+      - --log-level=debug
+ 
 
 volumes:
   db_data:
