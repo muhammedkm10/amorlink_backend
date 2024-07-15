@@ -1,13 +1,12 @@
-import os
-from django.core.asgi import get_asgi_application
 import django
-
+django.setup()
+from django.core.asgi import get_asgi_application
+import os
 from channels.routing import ProtocolTypeRouter, URLRouter
 from chatapp.routing import websocket_urlpatterns
 application = get_asgi_application()
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
-django.setup()
 
 application = ProtocolTypeRouter({
     'http': application,
