@@ -13,9 +13,8 @@ RUN python -m pip install --upgrade pip && \
 RUN pip install gunicorn
 # Copy the rest of the application code
 COPY . .
-ENV DJANGO_SETTINGS_MODULE=backend.settings
 # Expose the necessary port
 EXPOSE 8000
 
 # Start Daphne
-CMD ["gunicorn", "--bind", ":8000", "backend.wsgi:application"]
+CMD ["gunicorn", "-b", "0.0.0.0:8000", "your_application_module:app"]
