@@ -7,10 +7,6 @@ application = get_asgi_application()
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 
 
-import django
-django.setup()
-
-
 application = ProtocolTypeRouter({
     'http': application,
     'websocket': URLRouter(websocket_urlpatterns),
