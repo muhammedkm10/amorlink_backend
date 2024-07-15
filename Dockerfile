@@ -18,4 +18,4 @@ ENV DJANGO_SETTINGS_MODULE=backend.settings
 EXPOSE 8000
 
 # Start Daphne
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "backend.wsgi:application"]
+CMD ["gunicorn", "--bind", ":8000", "backend.wsgi:application"]
