@@ -9,13 +9,14 @@ COPY requirements.txt .
 RUN python -m pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Install Daphne
-RUN pip install uvicorn
+# Install Gunicorn
+RUN pip install gunicorn
+
 # Copy the rest of the application code
 COPY . .
 
 # Expose the necessary port
 EXPOSE 8000
 
-# Start Daphne
-CMD ["uvicorn", "backend.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
+# Start Gunicorn
+CMD ["gunicorn", "-b", "0.0.0.0:8000", "your_application_module:app"]
