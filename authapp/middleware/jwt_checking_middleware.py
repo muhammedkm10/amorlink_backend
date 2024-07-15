@@ -13,7 +13,7 @@ class JwtCheckingMiddleware:
         if request.method == "POST" and request.path in excluded_urls:
             response = self.get_response(request)
             return response
-        if request.path.startswith('/media/user_gallary') or request.path.startswith('/adminapp/payment-success')  :
+        if request.path.startswith('/media/user_gallary') or request.path.startswith('/adminapp/payment-success') or request.path.startswith('/ws/')  :
             response = self.get_response(request)
             return response
         else:
