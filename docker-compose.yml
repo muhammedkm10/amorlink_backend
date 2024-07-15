@@ -12,6 +12,18 @@ services:
       - db
     env_file:
       - .env
+  web-ws:
+    build: .
+    command: ["daphne", "--bind", "0.0.0.0:8001", "backend.asgi:application"]
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8001"
+    depends_on:
+      - db
+    env_file:
+      - .env
+
     
   db:
     image: postgres
@@ -45,19 +57,7 @@ services:
     image: "redis:alpine"
     ports:
       - "6379:6379"
-  # daphne:
-  #   build: .  # Build context same as your Django service
-  #   depends_on:
-  #     - web  # Ensure Daphne starts after Django is up
-  #   ports:
-  #     - "8002:8002"  # Map WebSocket port (adjust as needed)
-  #   volumes:
-  #     - .:/app  # Mount project directory
-  #   command:
-  #     - daphne
-  #     - --bind=0.0.0.0:8002  # Bind address and port for Daphne
-  #     - backend.asgi:application 
- 
+  
 
 volumes:
   db_data:
