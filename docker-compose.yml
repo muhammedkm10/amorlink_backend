@@ -50,7 +50,7 @@ services:
     depends_on:
       - web  # Ensure Daphne starts after Django is up
     ports:
-      - "8000:8002"  # Map WebSocket port (adjust as needed)
+      - "8002:8002"  # Map WebSocket port (adjust as needed)
     volumes:
       - .:/app  # Mount project directory
     command:
