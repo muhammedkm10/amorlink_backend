@@ -3,7 +3,7 @@ version: '3.9'
 services:
   web:
     build: .
-    command: ["daphne", "-u", "/tmp/daphne.sock", "backend.asgi:application"]
+    command: ["gunicorn", "--bind", ":8000", "backend.wsgi:application"]
     volumes:
       - .:/app
     ports:
