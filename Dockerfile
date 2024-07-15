@@ -13,7 +13,7 @@ RUN python -m pip install --upgrade pip && \
 RUN pip install uvicorn
 # Copy the rest of the application code
 COPY . .
-
+ENV DJANGO_SETTINGS_MODULE=backend.settings
 # Expose the necessary port
 EXPOSE 8000
 
