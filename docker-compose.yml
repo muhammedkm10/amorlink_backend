@@ -3,7 +3,7 @@ version: '3.9'
 services:
   web:
     build: .
-    command: ["daphne", "-u", "/tmp/daphne.sock", "backend.asgi:application"]
+    command: ["uvicorn", "backend.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
     volumes:
       - .:/app
     ports:

@@ -10,8 +10,7 @@ RUN python -m pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Install Daphne
-RUN pip install daphne
-
+RUN pip install uvicorn
 # Copy the rest of the application code
 COPY . .
 
@@ -19,4 +18,4 @@ COPY . .
 EXPOSE 8000
 
 # Start Daphne
-CMD ["daphne", "-u", "/tmp/daphne.sock", "backend.asgi:application"]
+CMD ["uvicorn", "backend.asgi:application", "--host", "0.0.0.0", "--port", "8000"]
