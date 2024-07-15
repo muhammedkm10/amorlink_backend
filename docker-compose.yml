@@ -1,18 +1,19 @@
 version: '3.9'
-
 services:
   web:
     build: .
-    command: ["gunicorn", "--bind", ":8000", "backend.wsgi:application"]
+    command: ["gunicorn", "-b", "0.0.0.0:8000", "backend.wsgi:application"]
     volumes:
       - .:/app
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     depends_on:
       - db
+      - redis
     env_file:
       - .env
-    
+    networks:
+      - backend-network
   db:
     image: postgres
     volumes:
@@ -21,17 +22,19 @@ services:
       POSTGRES_DB: ${DATABASE_NAME}
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-  
+    networks:
+      - backend-network
   celery-beat:
     build: .
     command: ["celery", "-A", "backend", "beat", "--loglevel=info"]
     volumes:
-      - .:/app 
+      - .:/app
     depends_on:
       - db
     env_file:
       - .env
-
+    networks:
+      - backend-network
   celery-worker:
     build: .
     command: ["celery", "-A", "backend", "worker", "--loglevel=info"]
@@ -41,14 +44,20 @@ services:
       - db
     env_file:
       - .env
+    networks:
+      - backend-network
   redis:
     image: "redis:alpine"
     ports:
       - "6379:6379"
+    networks:
+      - backend-network
+
+  
+
 
 volumes:
   db_data:
-
 networks:
   backend-network:
     driver: bridge
