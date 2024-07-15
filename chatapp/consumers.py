@@ -1,5 +1,4 @@
-import django
-django.setup()
+
 from channels.generic.websocket import AsyncWebsocketConsumer
 from urllib.parse import urlparse, parse_qs
 import json
