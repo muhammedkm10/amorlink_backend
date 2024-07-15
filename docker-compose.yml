@@ -55,7 +55,7 @@ services:
       - .:/app  # Mount project directory
     command:
       - daphne
-      - --bind=localhost:8002  # Bind address and port for Daphne
+      - --bind=0.0.0.0:8002  # Bind address and port for Daphne
       - backend.asgi:application 
  
 
