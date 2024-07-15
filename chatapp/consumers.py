@@ -1,7 +1,9 @@
+import django
+django.setup()
 from channels.generic.websocket import AsyncWebsocketConsumer
 from urllib.parse import urlparse, parse_qs
 import json
-from.models import ChatMessages
+from .models import ChatMessages
 from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
