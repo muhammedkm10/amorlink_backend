@@ -16,8 +16,7 @@ import os
 from datetime import timedelta
 import datetime
 import stripe
-import django
-django.setup()
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -31,6 +30,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-q2at82iwysz7o!=(wz!$lkpazl4x7bbij+t_n1=*=eomcb6kpp'
+
+import django
+django.setup()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
