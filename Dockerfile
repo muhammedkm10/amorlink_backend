@@ -19,4 +19,4 @@ COPY . .
 EXPOSE 8000
 
 # Start Gunicorn
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "your_application_module:app"]
+CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "backend.asgi:application"]
