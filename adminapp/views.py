@@ -104,7 +104,7 @@ class Create_payment_intent(APIView):
                 mode='payment',
                 
 
-                success_url= f'http://127.0.0.1:8000/adminapp/payment-success/{user_id}/{plan.id}/?{urlencode({"session_id": "{{CHECKOUT_SESSION_ID}}", "payment_type": payment_type ,"validity_months":validity_months})}',
+                success_url= f'https://www.muhammedshafeeque.site//adminapp/payment-success/{user_id}/{plan.id}/?{urlencode({"session_id": "{{CHECKOUT_SESSION_ID}}", "payment_type": payment_type ,"validity_months":validity_months})}',
                 cancel_url=f"{os.getenv('frontendUrl')}subscriptions"
             )
         except Exception as e:
