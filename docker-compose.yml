@@ -60,7 +60,7 @@ services:
       - backend-network
   daphne:
     build: .
-    command: ["daphne", "-b", "0.0.0.0", "-p", "8001", "backend.asgi:application"]
+    command: ["daphne", "--django-asgi", "-b", "0.0.0.0", "-p", "8001", "backend.asgi:application"]
     volumes:
       - .:/app
     ports:
